@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.BusPass" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/green_200</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/bus_inset</item>
+        <item name="postSplashScreenTheme">@style/Theme.BusPass</item>
+    </style>
+
+</resources>
