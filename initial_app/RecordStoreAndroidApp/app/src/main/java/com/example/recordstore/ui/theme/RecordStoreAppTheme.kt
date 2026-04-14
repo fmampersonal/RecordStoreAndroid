@@ -52,7 +52,7 @@ private val LightColorScheme = lightColorScheme(
  * @param content The composable content that will be wrapped by the theme. It is where your app's UI will be defined.
  */
 @Composable
-fun BusPassTheme(
+fun RecordStoreAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(), // Checks if the system is in dark theme
     dynamicColor: Boolean = true, // Enables dynamic color for Android 12+ (API level 31+)
     content: @Composable () -> Unit // The content that will be themed

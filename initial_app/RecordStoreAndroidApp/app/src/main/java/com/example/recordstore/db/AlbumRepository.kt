@@ -2,7 +2,7 @@ package com.example.recordstore.db
 
 import com.example.recordstore.dao.AlbumDao
 import com.example.recordstore.entity.Album
-import com.example.recordstore.utility.ApiUtility // This will be red until the next step!
+import com.example.recordstore.utility.ApiUtility
 import com.example.recordstore.utility.CisUtility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,32 +13,36 @@ class AlbumRepository(private val albumDao: AlbumDao) {
     var count: Int = 0
 
     suspend fun insert(album: Album) {
-        ApiUtility.insert(album) // Send to server
-        albumDao.insert(album)   // Save locally
+        // 1. Save locally FIRST so the UI updates instantly!
+        albumDao.insert(album)
+
+        // 2. Try to send it to the server in the background
+        ApiUtility.insert(album)
     }
 
     suspend fun update(album: Album) {
-        ApiUtility.insert(album) // The template uses insert for update on the API side
-        albumDao.update(album)
+        albumDao.update(album) // Local first
+        ApiUtility.insert(album)
     }
 
     suspend fun delete(album: Album) {
+        albumDao.delete(album) // Local first
         ApiUtility.delete(album)
-        albumDao.delete(album)
     }
 
     suspend fun fetchAndSaveAlbumsFromApi() {
         withContext(Dispatchers.IO) {
             try {
-                // Fetch data from the API
                 val albumsFromApi = ApiUtility.fetchAlbums()
 
-                // Delete all local room db albums and replace with those from the api
-                albumDao.deleteAll()
-                albumDao.insertAll(albumsFromApi)
+                if (albumsFromApi.isNotEmpty()) {
+                    albumDao.deleteAll()
+                    albumDao.insertAll(albumsFromApi)
+                    CisUtility.log("API", "Synced successfully with server.")
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                throw e
+                throw e // IMPORTANT: Re-throw the error so the ViewModel can see the failure!
             }
         }
     }

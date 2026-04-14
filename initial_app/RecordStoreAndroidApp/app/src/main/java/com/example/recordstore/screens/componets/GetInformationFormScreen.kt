@@ -18,11 +18,12 @@ fun GetInformationForm(
     album: Album? = null,
     onSubmit: (String, String, String, Boolean, Double) -> Unit
 ) {
-    var title by remember { mutableStateOf(album?.title ?: "") }
-    var artist by remember { mutableStateOf(album?.artist ?: "") }
-    var genre by remember { mutableStateOf(album?.genre ?: "") }
-    var basePriceStr by remember { mutableStateOf(album?.basePrice?.toString() ?: "") }
-    var isUsed by remember { mutableStateOf(album?.isUsed ?: false) }
+    // Update these to use the new names from your Album entity
+    var title by remember { mutableStateOf(album?.customerName ?: "") }       // Changed .title to .customerName
+    var artist by remember { mutableStateOf(album?.artistName ?: "") }       // Changed .artist to .artistName
+    var genre by remember { mutableStateOf(album?.formatType ?: "") }         // Changed .genre to .formatType
+    var basePriceStr by remember { mutableStateOf(album?.albumPrice?.toString() ?: "") } // Changed .basePrice to .albumPrice
+    var isUsed by remember { mutableStateOf(album?.giftWrapped ?: false) }     // Changed .isUsed to .giftWrapped
 
     Column(
         modifier = Modifier
@@ -32,10 +33,11 @@ fun GetInformationForm(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // ... rest of your OutlinedTextFields remain exactly the same ...
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Album Title") },
+            label = { Text("Customer Name (Album Title)") }, // Updated label for clarity
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -44,7 +46,7 @@ fun GetInformationForm(
         OutlinedTextField(
             value = artist,
             onValueChange = { artist = it },
-            label = { Text("Artist") },
+            label = { Text("Artist Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -53,7 +55,7 @@ fun GetInformationForm(
         OutlinedTextField(
             value = genre,
             onValueChange = { genre = it },
-            label = { Text("Genre") },
+            label = { Text("Format (Vinyl, CD, etc.)") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -62,7 +64,7 @@ fun GetInformationForm(
         OutlinedTextField(
             value = basePriceStr,
             onValueChange = { basePriceStr = it },
-            label = { Text("Base Price ($)") },
+            label = { Text("Album Price ($)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
@@ -77,7 +79,7 @@ fun GetInformationForm(
                 checked = isUsed,
                 onCheckedChange = { isUsed = it }
             )
-            Text("Is this a used record? (20% Discount)")
+            Text("Gift Wrapped / Used (20% Discount)")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -89,7 +91,7 @@ fun GetInformationForm(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save Album")
+            Text("Save Record Sale")
         }
     }
 }

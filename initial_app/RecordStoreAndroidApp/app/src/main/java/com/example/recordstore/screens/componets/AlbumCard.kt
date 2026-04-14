@@ -30,30 +30,28 @@ fun AlbumCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left side: Album Details
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = album.title,
+                    text = album.customerName, // Changed from title
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "by ${album.artist}",
+                    text = "by ${album.artistName}", // Changed from artist
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Genre: ${album.genre} | ${if (album.isUsed) "Used" else "New"}",
+                    text = "Format: ${album.formatType} | ${if (album.giftWrapped) "Gift Wrapped" else "Standard"}", // Updated labels
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = "Price: ${CisUtility.toCurrency(album.finalPrice.toDouble())}",
+                    text = "Price: ${CisUtility.toCurrency(album.totalCost)}", // Changed from finalPrice
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
 
-            // Right side: Action Buttons (Edit and Delete)
             Row {
                 IconButton(onClick = { onEdit(album) }) {
                     Icon(Icons.Default.Edit, contentDescription = "Edit Album")

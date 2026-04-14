@@ -38,24 +38,16 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun syncWithApi(context: Context) = viewModelScope.launch {
-        CisUtility.log("BJTEST", "Starting syncWithApi airplane enabled: $isInAirplaneMode")
+        Toast.makeText(context, "Syncing...", Toast.LENGTH_SHORT).show()
         try {
-            if (!isInAirplaneMode) {
-                CisUtility.log("BJTEST", "syncing with api")
-                repository.fetchAndSaveAlbumsFromApi()
-                Toast.makeText(contextForToast, "Synced with API", Toast.LENGTH_LONG).show()
-            } else {
-                CisUtility.log("BJTEST", "can not sync in airplane mode")
-                Toast.makeText(contextForToast, "Cannot sync while in airplane mode", Toast.LENGTH_LONG).show()
-            }
+            // If this line fails/throws an error, it skips the next line!
+            repository.fetchAndSaveAlbumsFromApi()
 
-            // TODO: Trigger Widget Update (Sprint 4)
-            // AlbumWidget().updateAll(context)
-
+            // This line ONLY runs if the line above worked perfectly
+            Toast.makeText(context, "Synced with API", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            CisUtility.log("BJTEST", "Exception sync with api")
-            Toast.makeText(contextForToast, "Exception occurred during sync", Toast.LENGTH_LONG).show()
-            e.printStackTrace()
+            // This runs if the server is offline or the code is wrong
+            Toast.makeText(context, "Sync Failed: Server Offline", Toast.LENGTH_LONG).show()
         }
     }
 

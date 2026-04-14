@@ -2,10 +2,12 @@ package com.example.recordstore.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.recordstore.entity.Album
+import com.example.recordstore.viewmodel.AlbumViewModel
 
 enum class Screen(val route: String) {
     MainScreen("main_screen"),
@@ -14,60 +16,51 @@ enum class Screen(val route: String) {
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MainNavigation() {
+fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
     val navController = rememberNavController()
-    var albums by remember { mutableStateOf(mutableListOf<Album>()) }
-    var album: Album? = null
-    var id by remember { mutableIntStateOf(1) }
-    var editId by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
+
+    // MAGIC HAPPENS HERE: Observe the Room database in real-time!
+    val albums by viewModel.allAlbums.collectAsState(initial = emptyList())
+    var albumToEdit: Album? by remember { mutableStateOf(null) }
 
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
-        // Main screen composable
+
         composable(Screen.MainScreen.route) {
             HomeScreen(
                 albums = albums,
-                onAddAlbumClick = { navController.navigate(Screen.AddAlbum.route) },
+                onAddAlbumClick = {
+                    albumToEdit = null
+                    navController.navigate(Screen.AddAlbum.route)
+                },
                 onEdit = { selectedAlbum ->
-                    album = selectedAlbum
-                    editId = selectedAlbum.id
+                    albumToEdit = selectedAlbum
                     navController.navigate(Screen.AddAlbum.route)
                 },
                 onDelete = { albumToRemove ->
-                    albums = albums.toMutableList().apply { remove(albumToRemove) }
+                    viewModel.delete(albumToRemove) // Uses the Database!
+                },
+                onSyncClick = {
+                    viewModel.syncWithApi(context) // Triggers your ApiUtility!
                 }
             )
         }
 
-        // Add album screen composable
         composable(Screen.AddAlbum.route) {
             AddAlbumScreen(
-                album = album,
+                album = albumToEdit,
                 onAlbumAdded = { newAlbum ->
-                    albums = if (album == null) {
-                        // Add new Album
-                        albums.toMutableList().apply {
-                            newAlbum.id = id
-                            add(newAlbum)
-                            id++
-                        }
+                    if (albumToEdit == null) {
+                        viewModel.insert(newAlbum) // Save new to Database
                     } else {
-                        // Update existing Album
-                        albums.toMutableList().apply {
-                            val index = indexOfFirst { it.id == album!!.id }
-                            if (index != -1) {
-                                newAlbum.id = editId
-                                set(index, newAlbum)
-                            }
-                        }
+                        newAlbum.id = albumToEdit!!.id // Keep the old ID so it updates, not duplicates
+                        viewModel.update(newAlbum) // Update in Database
                     }
-
-                    // Reset states
-                    album = null
-                    editId = 0
-                    // Navigate back to the main screen
+                    albumToEdit = null
                     navController.navigateUp()
                 },
                 back = {
+                    albumToEdit = null
                     navController.navigateUp()
                 }
             )

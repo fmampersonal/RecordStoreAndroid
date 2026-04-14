@@ -32,24 +32,23 @@ fun AddAlbumScreen(
             )
         }
     ) { paddingValues ->
-        // Call the form and wait for the user to submit Album details
         GetInformationForm(
             paddingValues = paddingValues,
             album = album,
-        ) { title, artist, genre, isUsed, basePrice ->
+        ) { titleFromForm, artistFromForm, genreFromForm, isUsedFromForm, basePriceFromForm ->
 
-            // 1. Create a new Album object based on form input
+            // 1. Create a new Album object using the NEW variable names from the entity
             val newAlbum = Album(
-                title = title,
-                artist = artist,
-                genre = genre,
-                isUsed = isUsed,
-                basePrice = basePrice,
-                finalPrice = 0.0.toBigDecimal()
+                customerName = titleFromForm,  // Updated
+                artistName = artistFromForm,    // Updated
+                formatType = genreFromForm,    // Updated
+                giftWrapped = isUsedFromForm,   // Updated
+                albumPrice = basePriceFromForm, // Updated
+                totalCost = 0.0                // Updated
             )
 
             // 2. Calculate the final price using our Business Object
-            newAlbum.finalPrice = AlbumBO.calculateFinalPrice(newAlbum).toBigDecimal()
+            newAlbum.totalCost = AlbumBO.calculateFinalPrice(newAlbum)
 
             // 3. Trigger the callback to notify the app
             onAlbumAdded(newAlbum)
