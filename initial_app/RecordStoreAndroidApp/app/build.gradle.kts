@@ -2,15 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt") // <-- ADD THIS LINE
+    id("kotlin-kapt")
 }
 
 android {
+    // 1. This must match the package name in your Kotlin files
     namespace = "com.example.recordstore"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.buspass"
+        // 2. FIX: This was still "buspass". Change it to "recordstore"
+        // to match your current project and resolve the logcat errors.
+        applicationId = "com.example.recordstore"
+
         minSdk = 29
         targetSdk = 34
         versionCode = 1
@@ -33,6 +37,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
+        // 3. Ensure your JVM target matches your compile options
         jvmTarget = "11"
     }
     buildFeatures {
@@ -41,7 +46,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -51,13 +55,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
     // Splash screen
     implementation("androidx.core:core-splashscreen:1.0.0")
@@ -69,8 +66,17 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
 
     // Material Icons Extended
-    implementation("androidx.compose.material:material-icons-extended:1.4.3")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // Test dependencies
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

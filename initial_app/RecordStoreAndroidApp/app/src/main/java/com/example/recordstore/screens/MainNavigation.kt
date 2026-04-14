@@ -42,7 +42,15 @@ fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
                 },
                 onSyncClick = {
                     viewModel.syncWithApi(context) // Triggers your ApiUtility!
+                },
+
+                onPlayClick = {                            // <-- Add this block
+                    viewModel.playMusic(true)
+                },
+                onStopClick = {                            // <-- Add this block
+                    viewModel.playMusic(false)
                 }
+
             )
         }
 

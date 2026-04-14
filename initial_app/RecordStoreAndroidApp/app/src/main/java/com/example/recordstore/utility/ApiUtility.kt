@@ -18,24 +18,25 @@ object ApiUtility {
     suspend fun fetchAlbums(): List<Album> = withContext(Dispatchers.IO) {
         val url = URL(BASE_URL)
         val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        connection.setRequestProperty("Accept", "application/json")
-        connection.connectTimeout = 5000
-        connection.readTimeout = 5000
-
-        // CHECK THE RESPONSE CODE MANUALLY
-        val responseCode = connection.responseCode
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            // This forces the code to jump to the 'catch' block immediately!
-            throw Exception("Server returned error code: $responseCode")
-        }
-
         try {
-            val response = connection.inputStream.bufferedReader().use { it.readText() }
-            val listType = object : TypeToken<List<Album>>() {}.type
-            gson.fromJson(response, listType)
+            connection.connectTimeout = 5000
+            connection.readTimeout = 5000
+
+            // Check if the server actually sent a 200 OK
+            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                val response = connection.inputStream.bufferedReader().use { it.readText() }
+                if (response.trim().startsWith("[")) { // Ensure it's a JSON array
+                    val listType = object : TypeToken<List<Album>>() {}.type
+                    Gson().fromJson(response, listType)
+                } else {
+                    emptyList() // Server sent text, but not a JSON list
+                }
+            } else {
+                throw Exception("Server Error: ${connection.responseCode}")
+            }
         } catch (e: Exception) {
-            throw e // Pass the error up to the ViewModel
+            e.printStackTrace()
+            throw e
         } finally {
             connection.disconnect()
         }

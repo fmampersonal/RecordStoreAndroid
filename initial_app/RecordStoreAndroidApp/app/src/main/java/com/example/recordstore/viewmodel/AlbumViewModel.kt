@@ -1,10 +1,12 @@
 package com.example.recordstore.viewmodel
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.recordstore.MusicService
 import com.example.recordstore.db.AlbumRepository
 import com.example.recordstore.entity.Album
 import com.example.recordstore.utility.CisUtility
@@ -52,8 +54,13 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun playMusic(start: Boolean) {
-        // TODO: Implement BackgroundMusicService (Sprint 4)
-        Toast.makeText(contextForToast, "Music service coming in Sprint 4!", Toast.LENGTH_SHORT).show()
+        val intent = Intent(contextForToast, MusicService::class.java)
+        if (start) {
+            intent.action = "START"
+        } else {
+            intent.action = "STOP"
+        }
+        contextForToast.startService(intent)
     }
 
     fun setReminderCalendarEvent(album: Album) {
