@@ -16,33 +16,51 @@ class AlbumRepository(private val albumDao: AlbumDao) {
         // 1. Save locally FIRST so the UI updates instantly!
         albumDao.insert(album)
 
-        // 2. Try to send it to the server in the background
-        ApiUtility.insert(album)
+        // 2. Send it to the Java server in the background
+        try {
+            ApiUtility.insert(album)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        // Notice we REMOVED fetchAndSaveAlbumsFromApi() from here.
+        // It will no longer auto-sync.
     }
 
     suspend fun update(album: Album) {
-        albumDao.update(album) // Local first
-        ApiUtility.insert(album)
+        // 1. Update locally FIRST
+        albumDao.update(album)
+
+        // 2. Send the update to Java
+        try {
+            ApiUtility.insert(album) // Assuming your API uses POST for both insert and update
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun delete(album: Album) {
         albumDao.delete(album) // Local first
-        ApiUtility.delete(album)
+        try {
+            ApiUtility.delete(album)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
+    // This ONLY runs when you press the Refresh button in the Top Bar!
     suspend fun fetchAndSaveAlbumsFromApi() {
         withContext(Dispatchers.IO) {
             try {
                 val albumsFromApi = ApiUtility.fetchAlbums()
 
                 if (albumsFromApi.isNotEmpty()) {
-                    albumDao.deleteAll()
-                    albumDao.insertAll(albumsFromApi)
+                    albumDao.deleteAll() // Clears the local list
+                    albumDao.insertAll(albumsFromApi) // Pulls in the fresh Java data with calculations!
                     CisUtility.log("API", "Synced successfully with server.")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                throw e // IMPORTANT: Re-throw the error so the ViewModel can see the failure!
+                throw e // Re-throw so the ViewModel can show the "Failed" Toast
             }
         }
     }

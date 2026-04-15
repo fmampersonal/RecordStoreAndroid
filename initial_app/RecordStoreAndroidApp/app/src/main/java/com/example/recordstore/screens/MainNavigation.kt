@@ -49,6 +49,9 @@ fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
                 },
                 onStopClick = {                            // <-- Add this block
                     viewModel.playMusic(false)
+                },
+                onSetReminder = { selectedAlbum ->                  // <-- Add this block
+                    viewModel.setReminderCalendarEvent(selectedAlbum)
                 }
 
             )

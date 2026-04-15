@@ -14,7 +14,8 @@ fun AlbumList(
     albums: List<Album>,
     modifier: Modifier = Modifier,
     onEdit: (Album) -> Unit,
-    onDelete: (Album) -> Unit
+    onDelete: (Album) -> Unit,
+    onSetReminder: (Album) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -26,7 +27,8 @@ fun AlbumList(
             AlbumCard(
                 album = album,
                 onEdit = onEdit,
-                onDelete = onDelete
+                onDelete = onDelete,
+                onSetReminder = onSetReminder
             )
         }
     }

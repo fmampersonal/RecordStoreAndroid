@@ -12,6 +12,8 @@ import com.example.recordstore.entity.Album
 import com.example.recordstore.utility.CisUtility
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import com.example.recordstore.contentprovider.CalendarProviderHelper
+import java.util.Calendar
 
 
 class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
@@ -64,9 +66,30 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun setReminderCalendarEvent(album: Album) {
-        // TODO: Implement Calendar Provider (Sprint 4)
-        Toast.makeText(contextForToast, "Calendar feature coming in Sprint 4!", Toast.LENGTH_SHORT).show()
+        // Create a timestamp for tomorrow at this exact time
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        val startTime = calendar.timeInMillis
+
+        // Make the event 1 hour long
+        calendar.add(Calendar.HOUR_OF_DAY, 1)
+        val endTime = calendar.timeInMillis
+
+        try {
+            CalendarProviderHelper.addEventToCalendar(
+                context = contextForToast,
+                title = "Listening Session: ${album.artistName}",
+                description = "Time to spin the ${album.formatType} format of ${album.customerName}!",
+                startDateMillis = startTime,
+                endDateMillis = endTime
+            )
+            Toast.makeText(contextForToast, "Calendar Event Created!", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(contextForToast, "Failed to create event", Toast.LENGTH_SHORT).show()
+        }
     }
+
+
 }
 
 class AlbumViewModelFactory(private val repository: AlbumRepository) : ViewModelProvider.Factory {

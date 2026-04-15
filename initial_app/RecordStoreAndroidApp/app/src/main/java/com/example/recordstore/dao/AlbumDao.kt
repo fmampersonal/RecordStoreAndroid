@@ -28,9 +28,11 @@ interface AlbumDao {
     fun getAllAlbums(): Flow<List<Album>>
 
     // Get all albums as a static List
+// Get all albums as a static List
     @Query("SELECT * FROM albums ORDER BY id")
     suspend fun getAllAlbumsList(): List<Album>
 
+    // Added the suspend keyword here!
     @Query("DELETE FROM albums")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

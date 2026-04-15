@@ -1,5 +1,7 @@
 package com.example.recordstore
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +16,12 @@ import com.example.recordstore.screens.MainNavigation
 import com.example.recordstore.ui.theme.RecordStoreAppTheme
 import com.example.recordstore.viewmodel.AlbumViewModel
 import com.example.recordstore.viewmodel.AlbumViewModelFactory
+import com.example.recordstore.broadcast.AirplaneModeReceiver
 
 class MainActivity : ComponentActivity() {
+
+    // Declare the receiver
+    private lateinit var airplaneModeReceiver: AirplaneModeReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,6 +36,14 @@ class MainActivity : ComponentActivity() {
         val albumViewModel = ViewModelProvider(this, viewModelFactory)[AlbumViewModel::class.java]
         albumViewModel.contextForToast = this
 
+        // Initialize and register the receiver
+        airplaneModeReceiver = AirplaneModeReceiver(albumViewModel)
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
+            registerReceiver(airplaneModeReceiver, it)
+        }
+
+
+
         setContent {
             RecordStoreAppTheme {
                 Surface(
@@ -40,6 +54,16 @@ class MainActivity : ComponentActivity() {
                     MainNavigation(viewModel = albumViewModel)
                 }
             }
-        }
+
+    }
+
+
+
+
+}
+    override fun onDestroy() {
+        super.onDestroy()
+        // Prevent memory leaks
+        unregisterReceiver(airplaneModeReceiver)
     }
 }

@@ -27,7 +27,8 @@ fun HomeScreen(
     onDelete: (Album) -> Unit,
     onSyncClick: () -> Unit,
     onPlayClick: () -> Unit, // <-- Added Parameter
-    onStopClick: () -> Unit  // <-- Added Parameter
+    onStopClick: () -> Unit, // <-- Added Parameter
+    onSetReminder: (Album) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -62,7 +63,8 @@ fun HomeScreen(
             albums = albums,
             modifier = Modifier.padding(paddingValues),
             onEdit = onEdit,
-            onDelete = onDelete
+            onDelete = onDelete,
+            onSetReminder = onSetReminder
         )
     }
 }
