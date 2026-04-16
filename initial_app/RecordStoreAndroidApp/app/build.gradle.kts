@@ -71,6 +71,15 @@ dependencies {
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // ADDED THESE TWO LINES FOR THE WIDGET
+    implementation("androidx.glance:glance-appwidget:1.0.0")
+    implementation("androidx.glance:glance-material3:1.0.0")
+
+    // QR Code Generation
+    implementation("com.google.zxing:core:3.5.3")
+
+
+
     // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

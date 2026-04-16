@@ -44,27 +44,30 @@ object CalendarProviderHelper {
     }
 
     fun getCalendarId(context: Context): Long {
-        val projection = arrayOf(
-            CalendarContract.Calendars._ID,
-            CalendarContract.Calendars.ACCOUNT_NAME,
-            CalendarContract.Calendars.ACCOUNT_TYPE
-        )
+        val projection = arrayOf(CalendarContract.Calendars._ID)
         try {
-            val cursor = context.contentResolver.query(CalendarContract.Calendars.CONTENT_URI, projection, null, null, null)
+            // Ask Android specifically for your main, primary calendar that is allowed to be drawn on screen!
+            val cursor = context.contentResolver.query(
+                CalendarContract.Calendars.CONTENT_URI,
+                projection,
+                "${CalendarContract.Calendars.VISIBLE} = 1 AND ${CalendarContract.Calendars.IS_PRIMARY} = 1",
+                null,
+                null
+            )
+
             var selectedCalendarId: Long = -1
 
             cursor?.use {
-                while (it.moveToNext()) {
-                    val id = it.getLong(0)
-                    val accountType = it.getString(2)
-                    if (accountType == "com.google") {
-                        selectedCalendarId = id
-                    }
+                // Grab the very first result
+                if (it.moveToFirst()) {
+                    selectedCalendarId = it.getLong(0)
                 }
             }
-            return if (selectedCalendarId != -1L) selectedCalendarId else 1L // Fallback to default local calendar
-        } catch (e: SecurityException) {
-            return -1L
+
+            // Fallback to the local device calendar (ID 1) if a primary Google one isn't found
+            return if (selectedCalendarId != -1L) selectedCalendarId else 1L
+        } catch (e: Exception) {
+            return 1L
         }
     }
 

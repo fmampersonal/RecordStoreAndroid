@@ -68,12 +68,13 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     fun setReminderCalendarEvent(album: Album) {
         // Create a timestamp for tomorrow at this exact time
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        calendar.add(Calendar.MINUTE, 5)
         val startTime = calendar.timeInMillis
 
         // Make the event 1 hour long
         calendar.add(Calendar.HOUR_OF_DAY, 1)
         val endTime = calendar.timeInMillis
+        CisUtility.log("CalendarTest", "Scheduling event for: ${calendar.time}")
 
         try {
             CalendarProviderHelper.addEventToCalendar(
