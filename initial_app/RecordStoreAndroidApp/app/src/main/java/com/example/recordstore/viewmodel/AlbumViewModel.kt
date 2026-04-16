@@ -42,15 +42,19 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun syncWithApi(context: Context) = viewModelScope.launch {
+
+        // 👇 1. Check if the phone is in Airplane Mode FIRST
+        if (isInAirplaneMode) {
+            Toast.makeText(context, "Please turn off Airplane Mode to sync", Toast.LENGTH_LONG).show()
+            return@launch // This instantly stops the function so it doesn't even try to connect!
+        }
+
+        // 👇 2. If it is NOT in airplane mode, proceed with the normal sync
         Toast.makeText(context, "Syncing...", Toast.LENGTH_SHORT).show()
         try {
-            // If this line fails/throws an error, it skips the next line!
             repository.fetchAndSaveAlbumsFromApi()
-
-            // This line ONLY runs if the line above worked perfectly
             Toast.makeText(context, "Synced with API", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            // This runs if the server is offline or the code is wrong
             Toast.makeText(context, "Sync Failed: Server Offline", Toast.LENGTH_LONG).show()
         }
     }

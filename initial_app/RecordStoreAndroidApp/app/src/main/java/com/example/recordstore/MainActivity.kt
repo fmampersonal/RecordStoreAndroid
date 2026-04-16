@@ -17,12 +17,13 @@ import com.example.recordstore.ui.theme.RecordStoreAppTheme
 import com.example.recordstore.viewmodel.AlbumViewModel
 import com.example.recordstore.viewmodel.AlbumViewModelFactory
 import com.example.recordstore.broadcast.AirplaneModeReceiver
-
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 class MainActivity : ComponentActivity() {
 
     // Declare the receiver
     private lateinit var airplaneModeReceiver: AirplaneModeReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         // 1. Initialize the Room Database
