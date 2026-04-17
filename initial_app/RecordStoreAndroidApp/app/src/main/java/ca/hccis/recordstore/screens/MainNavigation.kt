@@ -11,13 +11,15 @@ import ca.hccis.recordstore.screens.insights.InsightsScreen
 import ca.hccis.recordstore.screens.recordlist.HomeScreen
 import ca.hccis.recordstore.screens.recordsave.AddAlbumScreen
 import ca.hccis.recordstore.entity.Album
+import ca.hccis.recordstore.screens.chatpage.GeminiScreen
 import ca.hccis.recordstore.viewmodel.AlbumViewModel
 import kotlinx.coroutines.launch
 
 enum class Screen(val route: String) {
     MainScreen("main_screen"),
     AddAlbum("add_album"),
-    Chat("chat")
+    Insights("insights"),  // <-- Renamed from "chat"
+    GeminiChat("gemini_chat") // <-- NEW route for the professor's AI requirement
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -38,7 +40,7 @@ fun MainNavigation(viewModel: AlbumViewModel) {
         composable(Screen.MainScreen.route) {
             HomeScreen(
                 albums = albums,
-                snackbarHostState = snackbarHostState, // Pass to HomeScreen
+                snackbarHostState = snackbarHostState,
                 onAddAlbumClick = {
                     albumToEdit = null
                     navController.navigate(Screen.AddAlbum.route)
@@ -49,24 +51,16 @@ fun MainNavigation(viewModel: AlbumViewModel) {
                 },
                 onDelete = { albumToRemove ->
                     viewModel.delete(albumToRemove)
-                    // Trigger Delete Notification
                     scope.launch { snackbarHostState.showSnackbar("Sale deleted successfully") }
                 },
-                onSyncClick = {
-                    viewModel.syncWithApi(context)
-                },
-                onPlayClick = {
-                    viewModel.playMusic(true)
-                },
-                onStopClick = {
-                    viewModel.playMusic(false)
-                },
-                onSetReminder = { selectedAlbum ->
-                    viewModel.setReminderCalendarEvent(selectedAlbum)
-                },
-                onChatClick = {
-                    navController.navigate(Screen.Chat.route)
-                }
+                onSyncClick = { viewModel.syncWithApi(context) },
+                onPlayClick = { viewModel.playMusic(true) },
+                onStopClick = { viewModel.playMusic(false) },
+                onSetReminder = { selectedAlbum -> viewModel.setReminderCalendarEvent(selectedAlbum) },
+
+                // 👇 Now we have TWO distinct click handlers 👇
+                onInsightsClick = { navController.navigate(Screen.Insights.route) },
+                onGeminiClick = { navController.navigate(Screen.GeminiChat.route) }
             )
         }
 
@@ -94,10 +88,16 @@ fun MainNavigation(viewModel: AlbumViewModel) {
             )
         }
 
-        composable(Screen.Chat.route) {
+        composable(Screen.Insights.route) {
             InsightsScreen(
                 viewModel = viewModel,
                 onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(Screen.GeminiChat.route) {
+            GeminiScreen(
+                back = { navController.navigateUp() }
             )
         }
     }

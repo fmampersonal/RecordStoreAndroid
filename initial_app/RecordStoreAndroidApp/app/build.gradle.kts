@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,16 +14,21 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        // 2. FIX: This was still "buspass". Change it to "recordstore"
-        // to match your current project and resolve the logcat errors.
         applicationId = "ca.hccis.recordstore"
-
-        minSdk = 29
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 👇 ADD THIS EXACTLY AS YOUR PROFESSOR DID 👇
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(FileInputStream(localPropertiesFile))
+        }
+        val geminiApiKey = properties.getProperty("GEMINI_API_KEY", "")
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -42,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // <-- CRITICAL for the API key to work
     }
 }
 
@@ -79,6 +88,9 @@ dependencies {
 
     // QR Code Generation
     implementation("com.google.zxing:core:3.5.3")
+
+    // Gemini SDK for generative AI functionality
+    implementation("com.google.ai.client.generativeai:generativeai:0.6.0")
 
 
 
