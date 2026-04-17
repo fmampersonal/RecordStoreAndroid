@@ -7,13 +7,13 @@ plugins {
 
 android {
     // 1. This must match the package name in your Kotlin files
-    namespace = "com.example.recordstore"
+    namespace = "ca.hccis.recordstore"
     compileSdk = 35
 
     defaultConfig {
         // 2. FIX: This was still "buspass". Change it to "recordstore"
         // to match your current project and resolve the logcat errors.
-        applicationId = "com.example.recordstore"
+        applicationId = "ca.hccis.recordstore"
 
         minSdk = 29
         targetSdk = 34
@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Splash screen
     implementation("androidx.core:core-splashscreen:1.0.0")
