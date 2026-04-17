@@ -79,8 +79,6 @@ dependencies {
     // QR Code Generation
     implementation("com.google.zxing:core:3.5.3")
 
-    // Google Gemini AI for Chatbot
-    implementation("com.google.ai.client.generativeai:generativeai:0.2.2")
 
 
 

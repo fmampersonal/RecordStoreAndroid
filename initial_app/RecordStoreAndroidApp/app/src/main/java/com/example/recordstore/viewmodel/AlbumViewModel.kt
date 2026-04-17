@@ -16,6 +16,8 @@ import com.example.recordstore.contentprovider.CalendarProviderHelper
 import java.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.runtime.mutableStateOf
+import com.example.recordstore.bo.InsightsBO
 
 
 class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
@@ -95,6 +97,16 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
         } catch (e: Exception) {
             Toast.makeText(contextForToast, "Failed to create event. Check permissions.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    var topArtist = mutableStateOf("Calculating...")
+    var totalRevenue = mutableStateOf(0.0)
+    var recommendation = mutableStateOf("Analyzing inventory...")
+
+    fun runAnalysis(albums: List<Album>) {
+        topArtist.value = InsightsBO.getTopArtist(albums)
+        totalRevenue.value = InsightsBO.getTotalRevenue(albums)
+        recommendation.value = InsightsBO.getSmartRecommendation(albums)
     }
 
 

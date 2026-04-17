@@ -8,12 +8,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.recordstore.entity.Album
 import com.example.recordstore.viewmodel.AlbumViewModel
-import com.example.recordstore.chat.ChatPage // <-- ADDED IMPORT
+// Import your new screen
+import com.example.recordstore.screens.InsightsScreen
 
 enum class Screen(val route: String) {
     MainScreen("main_screen"),
     AddAlbum("add_album"),
-    Chat("chat") // <-- ADDED CHAT ROUTE
+    Chat("chat")
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -53,7 +54,7 @@ fun MainNavigation(viewModel: AlbumViewModel) {
                 onSetReminder = { selectedAlbum ->
                     viewModel.setReminderCalendarEvent(selectedAlbum)
                 },
-                onChatClick = { // <-- ADDED CHAT NAVIGATION HANDLER
+                onChatClick = {
                     navController.navigate(Screen.Chat.route)
                 }
             )
@@ -79,10 +80,10 @@ fun MainNavigation(viewModel: AlbumViewModel) {
             )
         }
 
-        // 👇 ADDED THE CHAT SCREEN COMPOSABLE HERE 👇
+        // 👇 UPDATED: Now points to InsightsScreen instead of ChatPage 👇
         composable(Screen.Chat.route) {
-            ChatPage(
-                albumViewModel = viewModel,
+            InsightsScreen(
+                viewModel = viewModel,
                 onNavigateBack = { navController.navigateUp() }
             )
         }
