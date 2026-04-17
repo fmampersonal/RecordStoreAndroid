@@ -9,23 +9,31 @@ data class Album(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
 
+    // 👇 Added to match Java API
+    @SerializedName("dateOfSale")
+    var dateOfSale: String = "",
+
     @SerializedName("artistName")
-    var artistName: String = "", // Rename variable from 'artist' to 'artistName'
+    var artistName: String = "",
 
     @SerializedName("customerName")
-    var customerName: String = "", // Rename variable from 'title' to 'customerName'
+    var customerName: String = "",
 
     @SerializedName("formatType")
-    var formatType: String = "Vinyl", // Rename variable from 'genre' to 'formatType'
+    var formatType: String = "Vinyl",
 
     @SerializedName("giftWrapped")
-    var giftWrapped: Boolean = false, // Rename variable from 'isUsed' to 'giftWrapped'
+    var giftWrapped: Boolean = false,
 
     @SerializedName("albumPrice")
-    var albumPrice: Double = 0.0, // Rename variable from 'basePrice' to 'albumPrice'
+    var albumPrice: Double = 0.0,
+
+    // 👇 Added to match Java API
+    @SerializedName("subtotal")
+    var subtotal: Int = 0,
 
     @SerializedName("totalCost")
-    var totalCost: Double = 0.0, // Rename variable from 'finalPrice' to 'totalCost'
+    var totalCost: Double = 0.0,
 
     @SerializedName("unitsSold")
     var unitsSold: Int = 1

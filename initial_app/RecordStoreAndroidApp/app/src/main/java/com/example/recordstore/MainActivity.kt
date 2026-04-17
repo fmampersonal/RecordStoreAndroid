@@ -18,6 +18,7 @@ import com.example.recordstore.viewmodel.AlbumViewModel
 import com.example.recordstore.viewmodel.AlbumViewModelFactory
 import com.example.recordstore.broadcast.AirplaneModeReceiver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import android.provider.Settings
 class MainActivity : ComponentActivity() {
 
     // Declare the receiver
@@ -36,6 +37,12 @@ class MainActivity : ComponentActivity() {
         val viewModelFactory = AlbumViewModelFactory(repository)
         val albumViewModel = ViewModelProvider(this, viewModelFactory)[AlbumViewModel::class.java]
         albumViewModel.contextForToast = this
+
+        val isCurrentlyInAirplaneMode = Settings.Global.getInt(
+            contentResolver,
+            Settings.Global.AIRPLANE_MODE_ON, 0
+        ) != 0
+        albumViewModel.setIsInAirplaneMode(isCurrentlyInAirplaneMode)
 
         // Initialize and register the receiver
         airplaneModeReceiver = AirplaneModeReceiver(albumViewModel)

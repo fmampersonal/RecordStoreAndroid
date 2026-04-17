@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import com.example.recordstore.contentprovider.CalendarProviderHelper
 import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
@@ -70,27 +72,28 @@ class AlbumViewModel(private val repository: AlbumRepository) : ViewModel() {
     }
 
     fun setReminderCalendarEvent(album: Album) {
-        // Create a timestamp for tomorrow at this exact time
+        // Grab the exact current time
         val calendar = Calendar.getInstance()
+
+        // 👇 Push it 5 minutes into the FUTURE so Google Calendar shows it and triggers the notification!
         calendar.add(Calendar.MINUTE, 5)
         val startTime = calendar.timeInMillis
 
         // Make the event 1 hour long
         calendar.add(Calendar.HOUR_OF_DAY, 1)
         val endTime = calendar.timeInMillis
-        CisUtility.log("CalendarTest", "Scheduling event for: ${calendar.time}")
 
         try {
             CalendarProviderHelper.addEventToCalendar(
                 context = contextForToast,
-                title = "Listening Session: ${album.artistName}",
-                description = "Time to spin the ${album.formatType} format of ${album.customerName}!",
+                title = "Record Sale: ${album.customerName}",
+                description = "Sale logged for ${album.formatType} format of ${album.artistName} for $${album.totalCost}.\nOriginally purchased on: ${album.dateOfSale}",
                 startDateMillis = startTime,
                 endDateMillis = endTime
             )
-            Toast.makeText(contextForToast, "Calendar Event Created!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contextForToast, "Sale logged on Calendar (Check Upcoming!)", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(contextForToast, "Failed to create event", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contextForToast, "Failed to create event. Check permissions.", Toast.LENGTH_SHORT).show()
         }
     }
 

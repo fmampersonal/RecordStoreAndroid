@@ -8,19 +8,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.recordstore.entity.Album
 import com.example.recordstore.viewmodel.AlbumViewModel
+import com.example.recordstore.chat.ChatPage // <-- ADDED IMPORT
 
 enum class Screen(val route: String) {
     MainScreen("main_screen"),
-    AddAlbum("add_album")
+    AddAlbum("add_album"),
+    Chat("chat") // <-- ADDED CHAT ROUTE
 }
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
+fun MainNavigation(viewModel: AlbumViewModel) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // MAGIC HAPPENS HERE: Observe the Room database in real-time!
     val albums by viewModel.allAlbums.collectAsState(initial = emptyList())
     var albumToEdit: Album? by remember { mutableStateOf(null) }
 
@@ -38,22 +39,23 @@ fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
                     navController.navigate(Screen.AddAlbum.route)
                 },
                 onDelete = { albumToRemove ->
-                    viewModel.delete(albumToRemove) // Uses the Database!
+                    viewModel.delete(albumToRemove)
                 },
                 onSyncClick = {
-                    viewModel.syncWithApi(context) // Triggers your ApiUtility!
+                    viewModel.syncWithApi(context)
                 },
-
-                onPlayClick = {                            // <-- Add this block
+                onPlayClick = {
                     viewModel.playMusic(true)
                 },
-                onStopClick = {                            // <-- Add this block
+                onStopClick = {
                     viewModel.playMusic(false)
                 },
-                onSetReminder = { selectedAlbum ->                  // <-- Add this block
+                onSetReminder = { selectedAlbum ->
                     viewModel.setReminderCalendarEvent(selectedAlbum)
+                },
+                onChatClick = { // <-- ADDED CHAT NAVIGATION HANDLER
+                    navController.navigate(Screen.Chat.route)
                 }
-
             )
         }
 
@@ -62,10 +64,10 @@ fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
                 album = albumToEdit,
                 onAlbumAdded = { newAlbum ->
                     if (albumToEdit == null) {
-                        viewModel.insert(newAlbum) // Save new to Database
+                        viewModel.insert(newAlbum)
                     } else {
-                        newAlbum.id = albumToEdit!!.id // Keep the old ID so it updates, not duplicates
-                        viewModel.update(newAlbum) // Update in Database
+                        newAlbum.id = albumToEdit!!.id
+                        viewModel.update(newAlbum)
                     }
                     albumToEdit = null
                     navController.navigateUp()
@@ -74,6 +76,14 @@ fun MainNavigation(viewModel: AlbumViewModel) { // Accept the ViewModel here!
                     albumToEdit = null
                     navController.navigateUp()
                 }
+            )
+        }
+
+        // 👇 ADDED THE CHAT SCREEN COMPOSABLE HERE 👇
+        composable(Screen.Chat.route) {
+            ChatPage(
+                albumViewModel = viewModel,
+                onNavigateBack = { navController.navigateUp() }
             )
         }
     }

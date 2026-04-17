@@ -3,9 +3,10 @@ package com.example.recordstore.screens
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close // <-- Added Icon
-import androidx.compose.material.icons.filled.PlayArrow // <-- Added Icon
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Face // <-- ADDED AI ICON
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,24 +27,27 @@ fun HomeScreen(
     onEdit: (Album) -> Unit,
     onDelete: (Album) -> Unit,
     onSyncClick: () -> Unit,
-    onPlayClick: () -> Unit, // <-- Added Parameter
-    onStopClick: () -> Unit, // <-- Added Parameter
-    onSetReminder: (Album) -> Unit
+    onPlayClick: () -> Unit,
+    onStopClick: () -> Unit,
+    onSetReminder: (Album) -> Unit,
+    onChatClick: () -> Unit // <-- ADDED PARAMETER
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Record Store") },
                 actions = {
-                    // Added Play Button
+                    // 👇 ADDED AI CHAT BUTTON 👇
+                    IconButton(onClick = onChatClick) {
+                        Icon(Icons.Default.Face, contentDescription = "Ask AI")
+                    }
+
                     IconButton(onClick = onPlayClick) {
                         Icon(Icons.Default.PlayArrow, contentDescription = "Play Music")
                     }
-                    // Added Stop Button
                     IconButton(onClick = onStopClick) {
                         Icon(Icons.Default.Close, contentDescription = "Stop Music")
                     }
-                    // Existing Sync Button
                     IconButton(onClick = onSyncClick) {
                         Icon(Icons.Default.Refresh, contentDescription = "Sync with API")
                     }

@@ -79,7 +79,7 @@ fun GetInformationForm(
                 checked = isUsed,
                 onCheckedChange = { isUsed = it }
             )
-            Text("Gift Wrapped / Used (20% Discount)")
+            Text("Gift Wrapped)")
         }
 
         Spacer(modifier = Modifier.height(24.dp))

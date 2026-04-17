@@ -58,6 +58,7 @@ dependencies {
 
     // Splash screen
     implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation(libs.generativeai)
 
     // Room Database
     val room_version = "2.6.1"
@@ -77,6 +78,9 @@ dependencies {
 
     // QR Code Generation
     implementation("com.google.zxing:core:3.5.3")
+
+    // Google Gemini AI for Chatbot
+    implementation("com.google.ai.client.generativeai:generativeai:0.2.2")
 
 
 
