@@ -83,7 +83,7 @@ fun GeminiScreen(
     ) { paddingValues ->
 
         // Fetching key exactly how your professor expects
-        val apiKey = BuildConfig.GEMINI_API_KEY
+        val apiKey = "AQ.Ab8RN6K0OALCiA8_w0Es2IrlfuWb91T5PEoNdlodrnu8lXLKow"
 
         val generativeModel = GenerativeModel(
             modelName = "gemini-2.5-flash", // Using your professor's exact model choice
