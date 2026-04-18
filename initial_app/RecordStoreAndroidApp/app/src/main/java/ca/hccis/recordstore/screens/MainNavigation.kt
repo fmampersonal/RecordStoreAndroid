@@ -15,11 +15,14 @@ import ca.hccis.recordstore.screens.chatpage.GeminiScreen
 import ca.hccis.recordstore.viewmodel.AlbumViewModel
 import kotlinx.coroutines.launch
 
+// 👇 Added Web and Map routes here 👇
 enum class Screen(val route: String) {
     MainScreen("main_screen"),
     AddAlbum("add_album"),
-    Insights("insights"),  // <-- Renamed from "chat"
-    GeminiChat("gemini_chat") // <-- NEW route for the professor's AI requirement
+    Insights("insights"),
+    GeminiChat("gemini_chat"),
+    Web("web_view"),
+    Map("map_screen")
 }
 
 @SuppressLint("MutableCollectionMutableState")
@@ -31,7 +34,6 @@ fun MainNavigation(viewModel: AlbumViewModel) {
     val albums by viewModel.allAlbums.collectAsState(initial = emptyList())
     var albumToEdit: Album? by remember { mutableStateOf(null) }
 
-    // 👇 Global Snackbar State & Coroutine Scope 👇
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -57,10 +59,11 @@ fun MainNavigation(viewModel: AlbumViewModel) {
                 onPlayClick = { viewModel.playMusic(true) },
                 onStopClick = { viewModel.playMusic(false) },
                 onSetReminder = { selectedAlbum -> viewModel.setReminderCalendarEvent(selectedAlbum) },
-
-                // 👇 Now we have TWO distinct click handlers 👇
                 onInsightsClick = { navController.navigate(Screen.Insights.route) },
-                onGeminiClick = { navController.navigate(Screen.GeminiChat.route) }
+                onGeminiClick = { navController.navigate(Screen.GeminiChat.route) },
+                // 👇 Passed the new click events into HomeScreen 👇
+                onWebClick = { navController.navigate(Screen.Web.route) },
+                onMapClick = { navController.navigate(Screen.Map.route) }
             )
         }
 
@@ -70,12 +73,10 @@ fun MainNavigation(viewModel: AlbumViewModel) {
                 onAlbumAdded = { newAlbum ->
                     if (albumToEdit == null) {
                         viewModel.insert(newAlbum)
-                        // Trigger Add Notification
                         scope.launch { snackbarHostState.showSnackbar("Sale added successfully") }
                     } else {
                         newAlbum.id = albumToEdit!!.id
                         viewModel.update(newAlbum)
-                        // Trigger Edit Notification
                         scope.launch { snackbarHostState.showSnackbar("Sale updated successfully") }
                     }
                     albumToEdit = null
@@ -98,6 +99,20 @@ fun MainNavigation(viewModel: AlbumViewModel) {
         composable(Screen.GeminiChat.route) {
             GeminiScreen(
                 back = { navController.navigateUp() }
+            )
+        }
+
+        // 👇 Web View Route 👇
+        composable(Screen.Web.route) {
+            WebViewScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
+        // 👇 Google Maps Route 👇
+        composable(Screen.Map.route) {
+            MapScreen(
+                onNavigateBack = { navController.navigateUp() }
             )
         }
     }

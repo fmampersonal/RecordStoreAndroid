@@ -88,11 +88,14 @@ dependencies {
 
     // QR Code Generation
     implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // Gemini SDK for generative AI functionality
     implementation("com.google.ai.client.generativeai:generativeai:0.6.0")
 
-
+    // Google Maps Compose
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
 
     // Test dependencies

@@ -35,4 +35,8 @@ interface AlbumDao {
     // Added the suspend keyword here!
     @Query("DELETE FROM albums")
     suspend fun deleteAll()
+
+    //content provider
+    @Query("SELECT * FROM albums ORDER BY id")
+    fun getAlbumsCursor(): android.database.Cursor
 }

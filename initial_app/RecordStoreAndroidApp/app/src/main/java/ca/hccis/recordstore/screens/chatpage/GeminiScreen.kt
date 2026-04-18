@@ -86,9 +86,12 @@ fun GeminiScreen(
         val apiKey = "AQ.Ab8RN6K0OALCiA8_w0Es2IrlfuWb91T5PEoNdlodrnu8lXLKow"
 
         val generativeModel = GenerativeModel(
-            modelName = "gemini-2.5-flash", // Using your professor's exact model choice
+            modelName = "gemini-2.5-flash", //
             apiKey = apiKey
         )
+
+//        val mapsApiKey = properties.getProperty("MAPS_API_KEY", "")
+//        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
 
         val coroutineScope = rememberCoroutineScope()
         val mainMenuInput = remember { mutableStateOf("") }
